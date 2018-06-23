@@ -159,4 +159,27 @@ class LinkedColorSweepView(ctx : Context) : View(ctx) {
             curr.startUpdating(startcb)
         }
     }
+
+    data class Renderer(var view : LinkedColorSweepView) {
+
+        private val linkedColorSweep : LinkedColorSweep = LinkedColorSweep(0)
+
+        private val animator : CSVAnimator = CSVAnimator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#212121"))
+            linkedColorSweep.draw(canvas, paint)
+            animator.animate {
+                linkedColorSweep.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            linkedColorSweep.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
