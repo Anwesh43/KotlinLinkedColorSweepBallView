@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.linkedcolorsweepballview
  * Created by anweshmishra on 23/06/18.
  */
 
+import android.app.Activity
 import android.view.View
 import android.content.Context
 import android.view.MotionEvent
@@ -182,6 +183,14 @@ class LinkedColorSweepView(ctx : Context) : View(ctx) {
             linkedColorSweep.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) : LinkedColorSweepView {
+            val view : LinkedColorSweepView = LinkedColorSweepView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
