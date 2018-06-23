@@ -90,7 +90,7 @@ class LinkedColorSweepView(ctx : Context) : View(ctx) {
         private var prev : CSVNode? = null
 
         init {
-
+            addNeighbor()
         }
 
         fun addNeighbor() {
@@ -114,7 +114,7 @@ class LinkedColorSweepView(ctx : Context) : View(ctx) {
             val h : Float = canvas.height.toFloat()
             val gap : Float = (0.8F * Math.min(w, h)) / CSV_NODES
             canvas.save()
-            canvas.translate(-gap/2 + i * gap + gap * state.scales[0], h + gap/2 + i * gap)
+            canvas.translate(-gap/2 + i * gap + gap * state.scales[0], h + gap/2 + i * gap - gap * state.scales[0])
             paint.color = Color.YELLOW
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = Math.min(w, h) / 60
