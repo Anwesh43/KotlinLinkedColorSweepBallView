@@ -39,9 +39,13 @@ class LinkedColorSweepView(ctx : Context) : View(ctx) {
             scales[j] += 0.1f * dir
             if (Math.abs(scales[j] - prevScale) > 1) {
                 scales[j] = prevScale + dir
-                dir = 0f
-                prevScale = scales[j]
-                stopcb(prevScale)
+                j += dir.toInt()
+                if (j == scales.size || j == -1) {
+                    j -= dir.toInt()
+                    dir = 0f
+                    prevScale = scales[j]
+                    stopcb(prevScale)
+                }
             }
         }
 
@@ -114,7 +118,7 @@ class LinkedColorSweepView(ctx : Context) : View(ctx) {
             val h : Float = canvas.height.toFloat()
             val gap : Float = (0.8F * Math.min(w, h)) / CSV_NODES
             canvas.save()
-            canvas.translate(-gap/2 + i * gap + gap * state.scales[0], h + gap/2 + i * gap - gap * state.scales[0])
+            canvas.translate(-gap/2 + i * gap + gap * state.scales[0] + gap/5, h + gap/2 - i * gap - gap * state.scales[0] - gap / 5)
             paint.color = Color.YELLOW
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = Math.min(w, h) / 60
