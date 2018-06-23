@@ -9,6 +9,8 @@ import android.content.Context
 import android.view.MotionEvent
 import android.graphics.*
 
+val CSV_NODES : Int = 5
+
 class LinkedColorSweepView(ctx : Context) : View(ctx) {
 
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -73,6 +75,64 @@ class LinkedColorSweepView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+
+
+    data class CSVNode(var i : Int, private val state : CSVState = CSVState()) {
+
+        private var next : CSVNode? = null
+
+        private var prev : CSVNode? = null
+
+        init {
+
+        }
+
+        fun addNeighbor() {
+            if (i < CSV_NODES - 1) {
+                next = CSVNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun update(stopcb : (Float) -> Unit) {
+            state.update(stopcb)
+        }
+
+        fun startUpdating(startcb  : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            prev?.draw(canvas, paint)
+            val w : Float = canvas.width.toFloat()
+            val h : Float = canvas.height.toFloat()
+            val gap : Float = (0.8F * Math.min(w, h)) / CSV_NODES
+            canvas.save()
+            canvas.translate(-gap/2 + i * gap + gap * state.scales[0], h + gap/2 + i * gap)
+            paint.color = Color.YELLOW
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = Math.min(w, h) / 60
+            val index1 : Int = i % 2
+            val scale : Float = (1 - state.scales[1]) * index1 + (state.scales[1]) * (1 - index1)
+            canvas.drawCircle(0f, 0f, gap/2, paint)
+            paint.style = Paint.Style.FILL
+            canvas.drawArc(RectF(-gap/2, -gap/2, gap/2, gap/2), 0f, 360f * scale, true, paint)
+            canvas.restore()
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : CSVNode {
+            var curr : CSVNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
